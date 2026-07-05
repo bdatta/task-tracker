@@ -2,6 +2,7 @@ import argparse
 import sys
 
 from tasktracker import commands
+from tasktracker.models import PRIORITIES
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -10,6 +11,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     add_parser = subparsers.add_parser("add", help="Add a new task")
     add_parser.add_argument("title", help="Task description")
+    add_parser.add_argument("--priority", choices=PRIORITIES, default="medium", help="Task priority")
 
     list_parser = subparsers.add_parser("list", help="List tasks")
     list_parser.add_argument("--all", action="store_true", help="Include completed tasks")
@@ -28,7 +30,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.command == "add":
-        task = commands.add(args.title)
+        task = commands.add(args.title, args.priority)
         print(f"Added task {task.id}: {task.title}")
 
     elif args.command == "list":
@@ -37,7 +39,7 @@ def main(argv: list[str] | None = None) -> int:
             print("No tasks found.")
         for task in tasks:
             status = "x" if task.done else " "
-            print(f"[{status}] {task.id}: {task.title}")
+            print(f"[{status}] {task.id}: {task.title} ({task.priority})")
 
     elif args.command == "done":
         task = commands.mark_done(args.id)

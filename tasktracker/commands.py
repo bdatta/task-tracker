@@ -2,9 +2,9 @@ from tasktracker.models import Task
 from tasktracker.storage import load_tasks, save_tasks, next_id
 
 
-def add(title: str) -> Task:
+def add(title: str, priority: str = "medium") -> Task:
     tasks = load_tasks()
-    task = Task(id=next_id(tasks), title=title)
+    task = Task(id=next_id(tasks), title=title, priority=priority)
     tasks.append(task)
     save_tasks(tasks)
     return task
